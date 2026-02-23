@@ -1,0 +1,17 @@
+<html>
+<head>
+    <title>Flask Microweb App</title>
+    <link rel="stylesheet" href="../static/style.css" />
+</head>
+<body>
+    <h1>Called via IP Gateway: {{ request.remote_addr }}</h1>
+    <h2>Current date and time: {{ datetime_now }}</h2>
+
+    <ul>
+        <li><a href="./account">Account</a></li>
+        <li><a href="./login">Login</a></li>
+        <li><a href="./map">Map</a></li>
+        <li><a href="./time">Time</a></li>
+    </ul>
+</body>
+</html>
