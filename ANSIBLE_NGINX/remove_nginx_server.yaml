@@ -1,0 +1,8 @@
+- name: Remove the install_nginx_server.yaml file
+  hosts: webservers
+  become: true
+  tasks:
+    - name: Remove install_nginx_server.yaml file
+      file:
+        path: install_nginx_server.yaml  # Update this path to where your file is located
+        state: absent

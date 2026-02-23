@@ -1,0 +1,62 @@
+- name: Install and start Nginx
+  hosts: webservers
+  become: true
+  vars: 
+    homepage_title: "ODISEE UNIVERSITY COLLEGE"
+    homepage_h1: "INFRASTRUCTURE & CLOUD"
+    homepage_date: "{{ansbile_date_time.date}}"
+    nginx_port: 8280
+    ansible_become_pass: Cisco123!
+
+  tasks:
+
+    # Update the package index
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    # Install Nginx
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+
+    # Ensure Nginx is running and enabled
+    - name: Start and enable Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Update Nginx to listen on port 8280
+      lineinfile:
+        path: /etc/nginx/sites-available/default
+        regexp: '^(\s*listen\s+)(\d+)(;)$'
+        line: '\18280\3'
+        backup: yes
+
+    # Create custom HTML file
+    - name: Create custom homepage
+      copy:
+        dest: /var/www/html/index.html
+        source: 
+        #content: |
+        #  <!DOCTYPE html>
+        #  <html lang="en">
+        #  <head>
+        #      <meta charset="UTF-8">
+        #      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        #      <title>Odisee University College</title>
+        #  </head>
+        #  <body>
+        #      <h1>Infrastructure & Cloud</h1>
+        #      <p>Today's date: {{ ansible_date_time.date }}</p>
+        #  </body>
+        #  </html>
+        mode: '0644'
+
+    # Reload Nginx to apply changes
+    - name: Reload Nginx
+      service:
+        name: nginx
+        state: reloaded

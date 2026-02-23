@@ -1,0 +1,56 @@
+- name: Install and configure Nginx
+  hosts: webservers
+  become: true
+  tasks:
+    # Update the package index
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    # Install Nginx
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+
+    # Ensure Nginx is running and enabled
+    - name: Start and enable Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    # Configure Nginx to listen on port 8280
+    - name: Update Nginx to listen on port 8280
+      lineinfile:
+        path: /etc/nginx/sites-available/default
+        regexp: '^(\s*listen\s+)(\d+)(;)$'
+        line: '\18280\3'
+        backup: yes
+
+    # Update Nginx configuration to serve files from /files directory
+    - name: Update Nginx configuration to serve from /files
+      replace:
+        path: /etc/nginx/sites-available/default
+        regexp: '/var/www/html'
+        replace: '/files'
+    
+    # Create the directory to store the HTML file (if it doesn't exist)
+    - name: Create /files directory
+      file:
+        path: /files
+        state: directory
+        mode: '0755'
+
+    # Copy custom HTML file to /files directory
+    - name: Copy custom homepage
+      copy:
+        src: /home/devasc/DEVNET/ANSIBLE_NGINX/files/index.html  # Update this to the local path of your index.html
+        dest: /files/index.html
+        mode: '0644'
+
+    # Reload Nginx to apply the new configuration
+    - name: Reload Nginx to apply changes
+      service:
+        name: nginx
+        state: reloaded
