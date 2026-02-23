@@ -1,0 +1,1 @@
+docker run --name eya_nginx_container -p 8008:80 -d nginx
