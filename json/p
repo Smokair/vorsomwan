@@ -1,0 +1,20 @@
+# Filter servers that use either TCP or UDP services
+filtered_servers = []
+rack_device_count = 0  # Variable to count devices per rack
+
+for g in devices_struc["rack"]:
+    server_info = g["server"]
+    rack_device_count += 1  # Increment count for each device in the rack
+    has_tcp_or_udp = False
+
+    for service in server_info["services"]:
+        if service["protocol"] in ["tcp", "udp"]:
+            has_tcp_or_udp = True
+            break
+    
+    if has_tcp_or_udp:
+        filtered_servers.append(server_info)
+
+# Output the filtered result and the count of devices per rack
+print(f"Devices per rack: {rack_device_count}")
+print(json.dumps(filtered_servers, indent=4))
